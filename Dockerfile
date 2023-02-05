@@ -15,4 +15,7 @@ RUN mv geckodriver /usr/local/bin/geckodriver
 ENV PORT=3000
 EXPOSE 3000
 
-CMD ["/bin/sh", "-c", "geckodriver --port 4444 & resentral_server"]
+COPY startup.sh .
+RUN chmod +x startup.sh
+
+CMD ["/bin/sh", "-c", "./startup.sh"]
