@@ -79,6 +79,7 @@ async fn scrape_daily_timetable(
             subject: "test".to_owned(),
             room: "test".to_owned(),
             teacher: "test".to_owned(),
+            colour: "#test".to_owned(),
         }],
     }))
 }
@@ -89,7 +90,7 @@ struct Period {
     subject: String,
     room: String,
     teacher: String,
-    color: String,
+    colour: String,
 }
 
 #[derive(Serialize)]
