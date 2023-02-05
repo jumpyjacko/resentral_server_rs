@@ -89,6 +89,7 @@ struct Period {
     subject: String,
     room: String,
     teacher: String,
+    color: String,
 }
 
 #[derive(Serialize)]
