@@ -69,13 +69,14 @@ async fn scrape_daily_timetable(
     f.set_by_name("password", &password).await?;
     f.submit().await?;
 
-    // TODO: All the scraping lol
+    // TODO: Need to find some Regex
     let table = c.find(Locator::Css(".timetable")).await?;
     let periods = table.find_all(Locator::Css(".timetable-dayperiod")).await?;
 
     for p in periods {
         let pt = p.text().await?;
-        println!("{}", pt);
+        let colour = p.css_value("background-color").await?;
+        println!("{}, css: {}", pt, colour);
     }
 
     c.close().await?;
