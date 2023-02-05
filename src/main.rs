@@ -70,6 +70,13 @@ async fn scrape_daily_timetable(
     f.submit().await?;
 
     // TODO: All the scraping lol
+    let table = c.find(Locator::Css(".timetable")).await?;
+    let periods = table.find_all(Locator::Css(".timetable-dayperiod")).await?;
+
+    for p in periods {
+        let pt = p.text().await?;
+        println!("{}", pt);
+    }
 
     c.close().await?;
 
