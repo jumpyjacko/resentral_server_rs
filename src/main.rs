@@ -73,17 +73,18 @@ async fn scrape_daily_timetable(
     let table = c.find(Locator::Css(".timetable")).await?;
     let periods = table.find_all(Locator::Css(".timetable-dayperiod")).await?;
 
-    for p in periods {
-        let pt = p.text().await?;
-        let colour = p.css_value("background-color").await?;
-        println!("{}, css: {}", pt, colour);
+    for period in periods {
+        let period_text = period.text().await?;
+        let elem = period.find_all(Locator::Css("div")).await?;
+        
+        println!("{}, css: \n", period_text);
     }
 
     c.close().await?;
 
     Ok(Json(DailyTimetable {
         periods: vec![Period {
-            period: "test".to_owned(),
+            period: "1 or like recess or something".to_owned(),
             subject: "test".to_owned(),
             room: "test".to_owned(),
             teacher: "test".to_owned(),
