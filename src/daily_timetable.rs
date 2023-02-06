@@ -36,7 +36,6 @@ pub async fn scrape_daily_timetable(
     f.set_by_name("password", &password).await?;
     f.submit().await?;
 
-    // TODO: Need to find some Regex
     let mut timetable: Vec<Period> = Vec::new();
 
     let table = c.find(Locator::Css(".timetable")).await?;

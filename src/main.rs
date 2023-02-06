@@ -1,4 +1,5 @@
 use crate::daily_timetable::scrape_daily_timetable;
+use crate::announcements::scrape_announcements;
 use axum::{
     http::{Response, StatusCode},
     response::IntoResponse,
@@ -11,6 +12,7 @@ use std::{collections::VecDeque, net::SocketAddr};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod daily_timetable;
+mod announcements;
 
 #[tokio::main]
 async fn main() {
@@ -23,7 +25,8 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(root))
-        .route("/daily_timetable", post(daily_timetable));
+        .route("/daily_timetable", post(daily_timetable))
+        .route("/announcements", post(announcements));
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
 
@@ -46,9 +49,22 @@ async fn daily_timetable(Json(payload): Json<User>) -> impl IntoResponse {
 
     let timetable = scrape_daily_timetable(response.username, response.password)
         .await
-        .expect("Couldn't scrape");
+        .expect("Couldn't scrape daily timetable");
 
     (StatusCode::OK, timetable)
+}
+
+async fn announcements(Json(payload): Json<User>) -> impl IntoResponse {
+    let response = User {
+        username: payload.username,
+        password: payload.password,
+    };
+
+    let announcements = scrape_announcements(response.username, response.password)
+        .await
+        .expect("Couldn't scrape announcements");
+    
+    (StatusCode::OK, announcements)
 }
 
 #[derive(Deserialize)]
