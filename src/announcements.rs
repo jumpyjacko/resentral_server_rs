@@ -3,8 +3,8 @@ use crate::*;
 #[derive(Serialize)]
 pub struct Announcement {
     pub name: String,
-    pub date: String,
-    pub time: String,
+    // pub date: String,
+    // pub time: String,
     pub title: String,
     pub body: String,
 }
@@ -43,11 +43,21 @@ pub async fn scrape_announcements(
         let header = announcement.find(Locator::Css(".notice-header")).await?.text().await?;
         let body = announcement.find(Locator::Css(".notice-content")).await?.text().await?;
         
-        let mut title: String = match header.lines().next() {
+        let title: String = match header.lines().next() {
             Some(title) => title.to_owned(),
             None => "".to_owned(),
         };
+
+        let name = announcement.find(Locator::Css(".small-caps > strong")).await?.text().await?;
+
+        announcements.push(Announcement {
+            name,
+            title,
+            body,
+        });
     }
 
-    todo!();
+    c.close().await?;
+
+    Ok(Json(Announcements { announcements }))
 }
