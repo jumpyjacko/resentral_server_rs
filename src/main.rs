@@ -28,7 +28,7 @@ async fn main() {
         .route("/daily_timetable", post(daily_timetable))
         .route("/announcements", post(announcements));
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
 
     tracing::debug!("listening on port {}", addr);
     axum::Server::bind(&addr)
