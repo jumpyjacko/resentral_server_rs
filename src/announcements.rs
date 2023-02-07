@@ -35,5 +35,19 @@ pub async fn scrape_announcements(
     f.set_by_name("password", &password).await?;
     f.submit().await?;
 
+    let mut announcements: Vec<Announcement> = Vec::new();
+
+    let mut notice_wrap = c.find_all(Locator::Css(".notice-wrap")).await?;
+
+    for announcement in notice_wrap {
+        let header = announcement.find(Locator::Css(".notice-header")).await?.text().await?;
+        let body = announcement.find(Locator::Css(".notice-content")).await?.text().await?;
+        
+        let mut title: String = match header.lines().next() {
+            Some(title) => title.to_owned(),
+            None => "".to_owned(),
+        };
+    }
+
     todo!();
 }
