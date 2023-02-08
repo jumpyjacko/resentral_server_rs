@@ -1,3 +1,3 @@
 #!/bin/sh
-chromedriver --port 4444 &
+chromium-driver --port 4444 &
 resentral_server
