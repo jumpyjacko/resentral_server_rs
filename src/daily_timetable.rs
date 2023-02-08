@@ -1,3 +1,5 @@
+use fantoccini::wd::Capabilities;
+
 use crate::*;
 
 #[derive(Serialize)]
@@ -19,11 +21,11 @@ pub async fn scrape_daily_timetable(
     username: String,
     password: String,
 ) -> Result<Json<DailyTimetable>, fantoccini::error::CmdError> {
-    let mut caps = serde_json::map::Map::new();
-    let opts = serde_json::json!({ "args": ["--headless"] });
-    caps.insert("moz:firefoxOptions".to_string(), opts.clone());
+    let arg = serde_json::json!({"args": ["--no-sandbox", "--headless", "--disable-dev-shm-usage"]});
+    let mut cap = Capabilities::new();
+    cap.insert("goog:chromeOptions".to_string(), arg);
     let c = ClientBuilder::native()
-        .capabilities(caps)
+        .capabilities(cap)
         .connect("http://localhost:4444")
         .await
         .expect("failed to connect to WebDriver");
