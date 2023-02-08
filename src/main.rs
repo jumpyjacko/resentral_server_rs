@@ -1,7 +1,7 @@
 use crate::daily_timetable::scrape_daily_timetable;
 use crate::announcements::scrape_announcements;
 use axum::{
-    http::{Response, StatusCode},
+    http::StatusCode,
     response::IntoResponse,
     routing::{get, post},
     Json, Router,

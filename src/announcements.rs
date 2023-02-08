@@ -37,7 +37,7 @@ pub async fn scrape_announcements(
 
     let mut announcements: Vec<Announcement> = Vec::new();
 
-    let mut notice_wrap = c.find_all(Locator::Css(".notice-wrap")).await?;
+    let notice_wrap = c.find_all(Locator::Css(".notice-wrap")).await?;
 
     for announcement in notice_wrap {
         let header = announcement.find(Locator::Css(".notice-header")).await?.text().await?;
