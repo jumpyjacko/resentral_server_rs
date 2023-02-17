@@ -1,5 +1,6 @@
 use crate::daily_timetable::scrape_daily_timetable;
 use crate::announcements::scrape_announcements;
+use crate::full_timetable::scrape_full_timetable;
 use axum::{
     http::StatusCode,
     response::IntoResponse,
@@ -13,6 +14,7 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod daily_timetable;
 mod announcements;
+mod full_timetable;
 
 #[tokio::main]
 async fn main() {
@@ -63,6 +65,19 @@ async fn announcements(Json(payload): Json<User>) -> impl IntoResponse {
     let announcements = scrape_announcements(response.username, response.password)
         .await
         .expect("Couldn't scrape announcements");
+    
+    (StatusCode::OK, announcements)
+}
+
+async fn full_timetable(Json(payload): Json<User>) -> impl IntoResponse {
+    let response = User {
+        username: payload.username,
+        password: payload.password,
+    };
+
+    let announcements = scrape_full_timetable(response.username, response.password)
+        .await
+        .expect("Couldn't scrape full timetable");
     
     (StatusCode::OK, announcements)
 }
