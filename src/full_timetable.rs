@@ -50,8 +50,6 @@ pub async fn scrape_full_timetable(
         .click()
         .await?;
 
-    let mut full_timetabe: Vec<Week> = Vec::new();
-
     let table = c.find(Locator::Css(".timetable")).await?;
 
     let periods = table.find_all(Locator::Css(".timetable-dayperiod")).await?;
@@ -60,9 +58,9 @@ pub async fn scrape_full_timetable(
     let amount_of_weeks = days.len() / 5; // Will break if using an irregular week, i.e. includes weekends
     let days_in_week = days.len() / amount_of_weeks;
 
-    let mut weeks = split_vec(periods, amount_of_weeks);
+    let weeks = split_vec(periods, amount_of_weeks);
 
-    let mut final_weeks: Vec<Week> = Vec::new();
+    let mut full_timetable: Vec<Week> = Vec::new();
 
     for week in weeks {
         let mut days: Vec<Day> = Vec::new();
@@ -72,15 +70,15 @@ pub async fn scrape_full_timetable(
             for day in week.iter().skip(i).step_by(days_in_week) {
                 let elems = day.find_all(Locator::Css("div")).await?;
                 let day_text = day.text().await?;
-                
+
                 let mut css: VecDeque<String> = VecDeque::new();
                 for elem in elems {
                     css.push_back(elem.css_value("border-left-color").await?);
-                }  
+                }
                 let colour: String = match css.pop_front() {
                     Some(colour) => colour,
                     None => "".to_owned(),
-                }; 
+                };
 
                 let mut subject: String = match day_text.lines().next() {
                     Some(subject) => subject.to_owned(),
@@ -91,22 +89,22 @@ pub async fn scrape_full_timetable(
                     None => "".to_owned(),
                 };
                 subject = subject.replace(&subject_short, "");
-        
-                let rest_of__text = match day_text.lines().last() {
+
+                let rest_of_text = match day_text.lines().last() {
                     Some(subject) => subject.to_owned(),
                     None => "".to_owned(),
                 };
 
-                let room = match rest_of__text.split_whitespace().nth(1) {
+                let room = match rest_of_text.split_whitespace().nth(1) {
                     Some(room) => room.to_owned(),
                     None => "".to_owned(),
                 };
 
-                let mut teacher = match rest_of__text.split_whitespace().nth(3) {
+                let mut teacher = match rest_of_text.split_whitespace().nth(3) {
                     Some(teacher) => teacher.to_owned(),
                     None => "".to_owned(),
                 };
-                let teacher_1 = match rest_of__text.split_whitespace().nth(4) {
+                let teacher_1 = match rest_of_text.split_whitespace().nth(4) {
                     Some(teacher) => teacher.to_owned(),
                     None => "".to_owned(),
                 };
@@ -126,10 +124,12 @@ pub async fn scrape_full_timetable(
             days.push(Day { periods, day: i });
         }
 
-        final_weeks.push(Week { days });
+        full_timetable.push(Week { days });
     }
-    
-    Ok(Json(FullTimetable { weeks: final_weeks }))
+
+    Ok(Json(FullTimetable {
+        weeks: full_timetable,
+    }))
 }
 
 // Thank you ChatGPT for existing
