@@ -63,13 +63,11 @@ pub async fn scrape_full_timetable(
     let mut weeks = split_vec(periods, amount_of_weeks);
 
     for (idx, week) in weeks.iter().enumerate() {
-        // for (idx1, day) in week.iter().enumerate() {
-        
-        // }
-        println!();
-        println!();
-        for thing in week.iter().step_by(days_in_week) {
-            println!("{:?} ", thing.text().await?);
+        for i in 0..days_in_week {
+            for day in week.iter().skip(i).step_by(days_in_week) { // Need to offset starting index
+                println!("{:?} ", day.text().await?);
+            }
+            println!("----------");
         }
     }
     
