@@ -21,7 +21,8 @@ pub async fn scrape_daily_timetable(
     username: String,
     password: String,
 ) -> Result<Json<DailyTimetable>, fantoccini::error::CmdError> {
-    let arg = serde_json::json!({"args": ["--no-sandbox", "--headless", "--disable-dev-shm-usage"]});
+    let arg =
+        serde_json::json!({"args": ["--no-sandbox", "--headless", "--disable-dev-shm-usage"]});
     let mut cap = Capabilities::new();
     cap.insert("goog:chromeOptions".to_string(), arg);
     let c = ClientBuilder::native()

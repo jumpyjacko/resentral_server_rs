@@ -18,7 +18,8 @@ pub async fn scrape_announcements(
     username: String,
     password: String,
 ) -> Result<Json<Announcements>, fantoccini::error::CmdError> {
-    let arg = serde_json::json!({"args": ["--no-sandbox", "--headless", "--disable-dev-shm-usage"]});
+    let arg =
+        serde_json::json!({"args": ["--no-sandbox", "--headless", "--disable-dev-shm-usage"]});
     let mut cap = fantoccini::wd::Capabilities::new();
     cap.insert("goog:chromeOptions".to_string(), arg);
     let c = ClientBuilder::native()
@@ -40,21 +41,29 @@ pub async fn scrape_announcements(
     let notice_wrap = c.find_all(Locator::Css(".notice-wrap")).await?;
 
     for announcement in notice_wrap {
-        let header = announcement.find(Locator::Css(".notice-header")).await?.text().await?;
-        let body = announcement.find(Locator::Css(".notice-content")).await?.text().await?;
-        
+        let header = announcement
+            .find(Locator::Css(".notice-header"))
+            .await?
+            .text()
+            .await?;
+        let body = announcement
+            .find(Locator::Css(".notice-content"))
+            .await?
+            .text()
+            .await?;
+
         let title: String = match header.lines().next() {
             Some(title) => title.to_owned(),
             None => "".to_owned(),
         };
 
-        let name = announcement.find(Locator::Css(".small-caps > strong")).await?.text().await?;
+        let name = announcement
+            .find(Locator::Css(".small-caps > strong"))
+            .await?
+            .text()
+            .await?;
 
-        announcements.push(Announcement {
-            name,
-            title,
-            body,
-        });
+        announcements.push(Announcement { name, title, body });
     }
 
     c.close().await?;
