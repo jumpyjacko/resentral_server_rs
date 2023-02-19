@@ -16,7 +16,7 @@ pub struct Week {
 #[derive(Serialize)]
 pub struct Day {
     pub periods: Vec<Period>,
-    pub day: u32,
+    pub day: usize,
 }
 
 pub async fn scrape_full_timetable(
@@ -62,17 +62,74 @@ pub async fn scrape_full_timetable(
 
     let mut weeks = split_vec(periods, amount_of_weeks);
 
-    for (idx, week) in weeks.iter().enumerate() {
+    let mut final_weeks: Vec<Week> = Vec::new();
+
+    for week in weeks {
+        let mut days: Vec<Day> = Vec::new();
         for i in 0..days_in_week {
-            for day in week.iter().skip(i).step_by(days_in_week) { // Need to offset starting index
-                println!("{:?} ", day.text().await?);
+            let mut periods: Vec<Period> = Vec::new();
+
+            for day in week.iter().skip(i).step_by(days_in_week) {
+                let elems = day.find_all(Locator::Css("div")).await?;
+                let day_text = day.text().await?;
+                
+                let mut css: VecDeque<String> = VecDeque::new();
+                for elem in elems {
+                    css.push_back(elem.css_value("border-left-color").await?);
+                }  
+                let colour: String = match css.pop_front() {
+                    Some(colour) => colour,
+                    None => "".to_owned(),
+                }; 
+
+                let mut subject: String = match day_text.lines().next() {
+                    Some(subject) => subject.to_owned(),
+                    None => "".to_owned(),
+                };
+                let subject_short = match subject.split_whitespace().last() {
+                    Some(subject) => subject.to_owned(),
+                    None => "".to_owned(),
+                };
+                subject = subject.replace(&subject_short, "");
+        
+                let rest_of__text = match day_text.lines().last() {
+                    Some(subject) => subject.to_owned(),
+                    None => "".to_owned(),
+                };
+
+                let room = match rest_of__text.split_whitespace().nth(1) {
+                    Some(room) => room.to_owned(),
+                    None => "".to_owned(),
+                };
+
+                let mut teacher = match rest_of__text.split_whitespace().nth(3) {
+                    Some(teacher) => teacher.to_owned(),
+                    None => "".to_owned(),
+                };
+                let teacher_1 = match rest_of__text.split_whitespace().nth(4) {
+                    Some(teacher) => teacher.to_owned(),
+                    None => "".to_owned(),
+                };
+                teacher.push(' ');
+                teacher.push_str(&teacher_1);
+
+                periods.push(Period {
+                    period: "".to_owned(),
+                    subject,
+                    subject_short,
+                    room,
+                    teacher,
+                    colour,
+                });
             }
-            println!("----------");
+
+            days.push(Day { periods, day: i });
         }
+
+        final_weeks.push(Week { days });
     }
     
-    todo!();
-    // Ok(Json(FullTimetable { weeks: week }))
+    Ok(Json(FullTimetable { weeks: final_weeks }))
 }
 
 // Thank you ChatGPT for existing

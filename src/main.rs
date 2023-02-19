@@ -28,7 +28,8 @@ async fn main() {
     let app = Router::new()
         .route("/", get(root))
         .route("/daily_timetable", post(daily_timetable))
-        .route("/announcements", post(announcements));
+        .route("/announcements", post(announcements))
+        .route("/full_timetable", post(full_timetable));
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
 
