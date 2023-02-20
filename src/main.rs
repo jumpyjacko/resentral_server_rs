@@ -48,9 +48,10 @@ async fn daily_timetable(Json(payload): Json<User>) -> impl IntoResponse {
     let response = User {
         username: payload.username,
         password: payload.password,
+        website: payload.website,
     };
 
-    let timetable = scrape_daily_timetable(response.username, response.password)
+    let timetable = scrape_daily_timetable(response.username, response.password, response.website)
         .await
         .expect("Couldn't scrape daily timetable");
 
@@ -61,9 +62,10 @@ async fn announcements(Json(payload): Json<User>) -> impl IntoResponse {
     let response = User {
         username: payload.username,
         password: payload.password,
+        website: payload.website,
     };
 
-    let announcements = scrape_announcements(response.username, response.password)
+    let announcements = scrape_announcements(response.username, response.password, response.website)
         .await
         .expect("Couldn't scrape announcements");
 
@@ -74,9 +76,10 @@ async fn full_timetable(Json(payload): Json<User>) -> impl IntoResponse {
     let response = User {
         username: payload.username,
         password: payload.password,
+        website: payload.website,
     };
 
-    let announcements = scrape_full_timetable(response.username, response.password)
+    let announcements = scrape_full_timetable(response.username, response.password, response.website)
         .await
         .expect("Couldn't scrape full timetable");
 
@@ -87,4 +90,5 @@ async fn full_timetable(Json(payload): Json<User>) -> impl IntoResponse {
 struct User {
     username: String,
     password: String,
+    website: String, // Possibly unsafe but I don't really care
 }

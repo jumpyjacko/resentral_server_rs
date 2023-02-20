@@ -20,6 +20,7 @@ pub struct DailyTimetable {
 pub async fn scrape_daily_timetable(
     username: String,
     password: String,
+    website: String,
 ) -> Result<Json<DailyTimetable>, fantoccini::error::CmdError> {
     let arg =
         serde_json::json!({"args": ["--no-sandbox", "--headless", "--disable-dev-shm-usage"]});
@@ -31,7 +32,7 @@ pub async fn scrape_daily_timetable(
         .await
         .expect("failed to connect to WebDriver");
 
-    c.goto("https://theforest-h.sentral.com.au/portal/login")
+    c.goto(&website)
         .await?;
 
     let f = c.form(Locator::Css("#login-form")).await?;

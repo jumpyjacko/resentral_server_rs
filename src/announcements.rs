@@ -17,6 +17,7 @@ pub struct Announcements {
 pub async fn scrape_announcements(
     username: String,
     password: String,
+    website: String,
 ) -> Result<Json<Announcements>, fantoccini::error::CmdError> {
     let arg =
         serde_json::json!({"args": ["--no-sandbox", "--headless", "--disable-dev-shm-usage"]});
@@ -28,7 +29,7 @@ pub async fn scrape_announcements(
         .await
         .expect("failed to connect to WebDriver");
 
-    c.goto("https://theforest-h.sentral.com.au/portal/login")
+    c.goto(&website)
         .await?;
 
     let f = c.form(Locator::Css("#login-form")).await?;
