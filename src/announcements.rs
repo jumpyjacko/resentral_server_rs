@@ -29,8 +29,7 @@ pub async fn scrape_announcements(
         .await
         .expect("failed to connect to WebDriver");
 
-    c.goto(&website)
-        .await?;
+    c.goto(&website).await?;
 
     let f = c.form(Locator::Css("#login-form")).await?;
     f.set_by_name("username", &username).await?;

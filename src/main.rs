@@ -65,9 +65,10 @@ async fn announcements(Json(payload): Json<User>) -> impl IntoResponse {
         website: payload.website,
     };
 
-    let announcements = scrape_announcements(response.username, response.password, response.website)
-        .await
-        .expect("Couldn't scrape announcements");
+    let announcements =
+        scrape_announcements(response.username, response.password, response.website)
+            .await
+            .expect("Couldn't scrape announcements");
 
     (StatusCode::OK, announcements)
 }
@@ -79,9 +80,10 @@ async fn full_timetable(Json(payload): Json<User>) -> impl IntoResponse {
         website: payload.website,
     };
 
-    let announcements = scrape_full_timetable(response.username, response.password, response.website)
-        .await
-        .expect("Couldn't scrape full timetable");
+    let announcements =
+        scrape_full_timetable(response.username, response.password, response.website)
+            .await
+            .expect("Couldn't scrape full timetable");
 
     (StatusCode::OK, announcements)
 }

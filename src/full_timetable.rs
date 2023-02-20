@@ -34,8 +34,7 @@ pub async fn scrape_full_timetable(
         .await
         .expect("failed to connect to WebDriver");
 
-    c.goto(&website)
-        .await?;
+    c.goto(&website).await?;
 
     let f = c.form(Locator::Css("#login-form")).await?;
     f.set_by_name("username", &username).await?;
@@ -44,7 +43,7 @@ pub async fn scrape_full_timetable(
 
     c.wait()
         .for_element(Locator::Css(".colour-timetable"))
-        .await?; // Possibly bad
+        .await?; // Actually very bad, very possible to timeout
 
     c.find(Locator::Css(".colour-timetable"))
         .await?
@@ -54,10 +53,10 @@ pub async fn scrape_full_timetable(
     let table = c.find(Locator::Css(".timetable")).await?;
 
     let periods = table.find_all(Locator::Css(".timetable-dayperiod")).await?;
-    let days = table.find_all(Locator::Css(".timetable-day")).await?;
+    let days_table = table.find_all(Locator::Css(".timetable-day")).await?;
 
-    let amount_of_weeks = days.len() / 5; // Will break if using an irregular week, i.e. includes weekends
-    let days_in_week = days.len() / amount_of_weeks;
+    let amount_of_weeks = days_table.len() / 5; // Will break if using an irregular week, i.e. includes weekends
+    let days_in_week = days_table.len() / amount_of_weeks;
 
     let weeks = split_vec(periods, amount_of_weeks);
 
@@ -112,8 +111,16 @@ pub async fn scrape_full_timetable(
                 teacher.push(' ');
                 teacher.push_str(&teacher_1);
 
+                let parent_element = day.find(Locator::XPath("./..")).await?;
+
+                let period = parent_element
+                    .find(Locator::Css(".timetable-period"))
+                    .await?
+                    .text()
+                    .await?;
+
                 periods.push(Period {
-                    period: "".to_owned(),
+                    period,
                     subject,
                     subject_short,
                     room,
