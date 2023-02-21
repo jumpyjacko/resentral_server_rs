@@ -25,7 +25,7 @@ pub async fn scrape_full_timetable(
     website: String,
 ) -> Result<Json<FullTimetable>, fantoccini::error::CmdError> {
     let arg =
-        serde_json::json!({"args": ["--no-sandbox", /*"--headless",*/ "--disable-dev-shm-usage"]});
+        serde_json::json!({"args": ["--no-sandbox", "--headless", "--disable-dev-shm-usage"]});
     let mut cap = Capabilities::new();
     cap.insert("goog:chromeOptions".to_string(), arg);
     let c = ClientBuilder::native()
