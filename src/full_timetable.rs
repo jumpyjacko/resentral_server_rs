@@ -16,7 +16,7 @@ pub struct Week {
 #[derive(Serialize)]
 pub struct Day {
     pub periods: Vec<Period>,
-    pub day: usize,
+    pub day: String,
 }
 
 pub async fn scrape_full_timetable(
@@ -25,7 +25,7 @@ pub async fn scrape_full_timetable(
     website: String,
 ) -> Result<Json<FullTimetable>, fantoccini::error::CmdError> {
     let arg =
-        serde_json::json!({"args": ["--no-sandbox", "--headless", "--disable-dev-shm-usage"]});
+        serde_json::json!({"args": ["--no-sandbox", /*"--headless",*/ "--disable-dev-shm-usage"]});
     let mut cap = Capabilities::new();
     cap.insert("goog:chromeOptions".to_string(), arg);
     let c = ClientBuilder::native()
@@ -62,7 +62,7 @@ pub async fn scrape_full_timetable(
 
     let mut full_timetable: Vec<Week> = Vec::new();
 
-    for week in weeks {
+    for (week_counter, week) in weeks.iter().enumerate() {
         let mut days: Vec<Day> = Vec::new();
         for i in 0..days_in_week {
             let mut periods: Vec<Period> = Vec::new();
@@ -129,7 +129,10 @@ pub async fn scrape_full_timetable(
                 });
             }
 
-            days.push(Day { periods, day: i });
+            days.push(Day {
+                periods,
+                day: days_table[(week_counter * days_in_week) + 1].text().await?,
+            });
         }
 
         full_timetable.push(Week { days });
