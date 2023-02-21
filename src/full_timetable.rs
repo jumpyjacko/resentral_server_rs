@@ -129,6 +129,7 @@ pub async fn scrape_full_timetable(
                 });
             }
 
+            periods.pop();
             days.push(Day {
                 periods,
                 day: days_table[(week_counter * days_in_week) + 1].text().await?,
