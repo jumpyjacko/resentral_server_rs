@@ -67,7 +67,7 @@ pub async fn scrape_full_timetable(
         for i in 0..days_in_week {
             let mut periods: Vec<Period> = Vec::new();
 
-            for day in week.iter().skip(i).step_by(days_in_week) {
+            for  day in week.iter().skip(i).step_by(days_in_week) {
                 let elems = day.find_all(Locator::Css("div")).await?;
                 let day_text = day.text().await?;
 
@@ -111,13 +111,9 @@ pub async fn scrape_full_timetable(
                 teacher.push(' ');
                 teacher.push_str(&teacher_1);
 
-                let parent_element = day.find(Locator::XPath("./..")).await?;
-
-                let period = parent_element
-                    .find(Locator::Css(".timetable-period"))
-                    .await?
-                    .text()
-                    .await?;
+                // ChatGPT, it took 4 tries... I don't know my XPath
+                let xpath_expression = "preceding-sibling::th[@class='timetable-period'][1]";
+                let period = day.find(Locator::XPath(xpath_expression)).await.unwrap().text().await?;
 
                 periods.push(Period {
                     period,
