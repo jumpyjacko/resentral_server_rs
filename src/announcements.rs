@@ -40,6 +40,11 @@ pub async fn scrape_announcements(
 
     let notice_wrap = c.find_all(Locator::Css(".notice-wrap")).await?;
 
+    if notice_wrap.is_empty() {
+        announcements.push(Announcement { name: "Empty".to_owned(), title: "Empty".to_owned(), body: "Empty".to_owned() });
+        return Ok(Json(Announcements { announcements }));
+    }
+
     for announcement in notice_wrap {
         let header = announcement
             .find(Locator::Css(".notice-header"))
