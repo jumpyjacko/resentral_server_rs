@@ -1,3 +1,6 @@
+# PROJECT IS ARCHIVED
+... see the [main repository](https://github.com/jumpyjacko/resentral_flutter) for more info. You can build your own docker image with this repo if you want (I don't have the image hosted anywhere! sorry!)
+
 # resentral_server_rs
 Re-write and basically revival of my old Sentral web-scraping server for resentral. The main app is at [this repo](https://github.com/jumpyjacko/resentral_flutter).
 
